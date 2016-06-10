@@ -449,5 +449,13 @@ class Diglin_Mssql_Model_Db_Adapter_Mssql extends Zend_Db_Adapter_Sqlsrv impleme
         // TODO: Implement createTableFromSelect() method.
     }
 
-
+    /**
+     * Returns the symbol the adapter uses for delimited identifiers.
+     *
+     * @return string
+     */
+    public function getQuoteIdentifierSymbol()
+    {
+        return '';
+    }
 }

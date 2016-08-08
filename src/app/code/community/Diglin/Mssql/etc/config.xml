@@ -12,7 +12,7 @@
 <config>
     <modules>
         <Diglin_Mssql>
-            <version>0.1.0</version>
+            <version>0.1.1</version>
         </Diglin_Mssql>
     </modules>
 

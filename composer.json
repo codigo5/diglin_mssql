@@ -1,7 +1,7 @@
 {
     "name": "diglin/diglin_mssql",
     "description": "Mssql Adapter for Magento (limited features)",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "type": "magento-module",
     "license": "OSL-3.0",
     "authors": [

@@ -72,6 +72,45 @@ class Diglin_Mssql_Model_Db_Statement_Mssql extends Zend_Db_Statement
     }
 
     /**
+     * @param string $sql
+     * @return void
+     */
+    protected function _parseParameters($sql)
+    {
+        $sql = $this->_stripQuoted($sql);
+
+        // split into text and params
+        $this->_sqlSplit = preg_split('/(?:\s|\()+(\?|\:[a-zA-Z0-9_]+)/',
+            $sql, -1, PREG_SPLIT_DELIM_CAPTURE|PREG_SPLIT_NO_EMPTY);
+
+        // map params
+        $this->_sqlParam = array();
+        foreach ($this->_sqlSplit as $key => $val) {
+            if ($val == '?') {
+                if ($this->_adapter->supportsParameters('positional') === false) {
+                    /**
+                     * @see Zend_Db_Statement_Exception
+                     */
+                    #require_once 'Zend/Db/Statement/Exception.php';
+                    throw new Zend_Db_Statement_Exception("Invalid bind-variable position '$val'");
+                }
+            } else if ($val[0] == ':') {
+                if ($this->_adapter->supportsParameters('named') === false) {
+                    /**
+                     * @see Zend_Db_Statement_Exception
+                     */
+                    #require_once 'Zend/Db/Statement/Exception.php';
+                    throw new Zend_Db_Statement_Exception("Invalid bind-variable name '$val'");
+                }
+            }
+            $this->_sqlParam[] = $val;
+        }
+
+        // set up for binding
+        $this->_bindParam = array();
+    }
+
+    /**
      * Binds a parameter to the specified variable name.
      *
      * @param mixed $parameter Name the parameter, either integer or string.
@@ -389,7 +428,7 @@ class Diglin_Mssql_Model_Db_Statement_Mssql extends Zend_Db_Statement
         if (mssql_next_result($this->_result) === false) {
             throw new Zend_Db_Statement_Exception(mssql_get_last_message());
         }
-        
+
         // reset column keys
         $this->_keys = null;
 
@@ -423,7 +462,7 @@ class Diglin_Mssql_Model_Db_Statement_Mssql extends Zend_Db_Statement
 
         return $num_rows;
     }
-    
+
     /**
      * Returns an array containing all of the result set rows.
      *
